@@ -1,0 +1,45 @@
+define(function(require) {
+    var self = function(errors, param1) {
+        this.errors = errors;
+        this.data = "hi";
+
+        this.testFunc = function() {
+            this.errors.push("some fake message");
+        }
+
+        this.testData = function(){
+            console.log(this.data);
+        }
+
+        this.testSimple = function() {
+            console.log('hello world');
+        }
+
+        this.testParam = function() {
+            console.log('param: ', param1);
+        }
+
+        this.callOutsideFromInside = function() {
+            outsideTest(this.errors);
+        }
+
+        this.callInternal = function() {
+            internal();
+            console.log('internal referencing this data from this function:::', this.data);//FAILS
+        }
+
+        function internal() {
+            console.log('hello from internal');
+            console.log('internal referencing param values:::', param1);//WORKS
+            //console.log('internal referencing plain data:::', data);//FAILS runtime error.  No clojure here
+            console.log('internal referencing this data:::', this.data);//FAILS
+            console.log('internal referencing this data via self:::', self.data);//FAILS.  Need to pass "data"
+        }
+    }
+
+    var outsideTest = function(errors) {
+        errors.push("some fake message from outside test");
+    }
+
+    return self;
+})
